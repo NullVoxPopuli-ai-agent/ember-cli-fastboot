@@ -10,6 +10,8 @@ export interface FastBootOptions {
   entry?: string;
   /** A Vite dev server. FastBoot then renders the current source files in this process. */
   vite?: ViteDevServer;
+  /** The HTML file of the build (or with `vite`, of the app) to render into. The default is `index.html`. */
+  template?: string;
   /** The number of worker threads. The default is `os.availableParallelism()`. */
   workers?: number;
   /** Hosts that `fastboot.request.host` accepts. */
@@ -27,7 +29,7 @@ export interface VisitOptions {
   response?: ServerResponse;
   /** Data for `fastboot.metadata`. It must survive `structuredClone`. */
   metadata?: unknown;
-  /** The HTML page to render into. The default is `index.html` of the build. */
+  /** The HTML page to render into. The default is the `template` of the build. */
   html?: string;
   resilient?: boolean;
 }

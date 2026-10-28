@@ -27,6 +27,7 @@ export function fastboot(options = {}) {
   let command;
   let resolvedConfig;
   let ownManifest = false;
+  let written = false;
 
   return {
     name: 'fastboot',
@@ -62,11 +63,19 @@ export function fastboot(options = {}) {
      *
      * The SSR build loads the same config file, and this hook skips it there (`build.ssr` is set).
      */
+    /**
+     * Vite also calls `closeBundle` after a failed build.
+     * The prerender runs only after the files are written, so that the build error stays visible.
+     */
+    writeBundle() {
+      written = true;
+    },
+
     closeBundle: {
       order: 'post',
       sequential: true,
       async handler() {
-        if (!prerenderOptions || command !== 'build' || resolvedConfig.build.ssr) return;
+        if (!prerenderOptions || !written || command !== 'build' || resolvedConfig.build.ssr) return;
 
         let config = resolvedConfig;
         let distPath = resolve(config.root, config.build.outDir);
@@ -123,6 +132,12 @@ export function fastboot(options = {}) {
       let handler;
 
       /**
+       * With `prerender`, the dev server renders the same pages as the build, into the same template.
+       * The other pages stay as the browser renders them.
+       */
+      let prerendered = prerenderOptions && new Set(prerenderOptions.routes.map((route) => pathOf(route)));
+
+      /**
        * This runs after the internal middlewares of Vite.
        * There, a page request has `req.url` = '/index.html',
        * and `req.originalUrl` is the URL of the page.
@@ -136,8 +151,18 @@ export function fastboot(options = {}) {
             return;
           }
 
+          if (prerendered && !prerendered.has(pathOf(req.originalUrl ?? req.url))) {
+            next();
+            return;
+          }
+
           handler ??= fastbootMiddleware(
-            new FastBoot({ ...fastbootOptions, vite: server, entry: `/${entry.replace(/^\//, '')}` }),
+            new FastBoot({
+              ...fastbootOptions,
+              vite: server,
+              entry: `/${entry.replace(/^\//, '')}`,
+              template: prerenderOptions?.template,
+            }),
           );
 
           handler(req, res, (error) => {
@@ -149,6 +174,15 @@ export function fastboot(options = {}) {
       };
     },
   };
+}
+
+/**
+ * A URL as a path to compare: '/docs/?x=1' and 'docs' are both '/docs'.
+ */
+function pathOf(url) {
+  let path = url.split('?')[0].replace(/\/+$/, '');
+
+  return path.startsWith('/') ? path || '/' : `/${path}`;
 }
 
 /**

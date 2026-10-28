@@ -164,6 +164,9 @@ import { prerender } from 'fastboot/prerender';
 await prerender({ distPath: 'dist', routes: ['/', '/about', '/blog'] });
 ```
 
+With `prerender`, the dev server renders only the `prerender.routes`, into the same template as the build.
+The browser renders the other pages.
+
 The build fails when a page has an error, or a status code of 400 or more.
 The browser takes over each page, as it does after SSR.
 

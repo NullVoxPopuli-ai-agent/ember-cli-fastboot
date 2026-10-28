@@ -29,6 +29,7 @@ res.end(result.html());
 | ---------------- | --------------------------- | ----------------------------------------------------------------------------------------------- |
 | `distPath`       |                             | the directory of the build that has `index.html`                                                |
 | `entry`          |                             | the SSR bundle of a Vite build; without it, `distPath` is a classic build                       |
+| `template`       | `index.html`                | the HTML file to render into, in `distPath` (or with `vite`, in the root of the app)            |
 | `vite`           |                             | a Vite dev server; FastBoot then renders the current source files, and `entry` is a source path |
 | `workers`        | `os.availableParallelism()` | the number of worker threads                                                                    |
 | `allowedHosts`   |                             | hosts for `fastboot.request.host`: strings, or `RegExp`s                                        |
@@ -132,6 +133,7 @@ export default defineConfig({
 - `vite build --ssr <entry>`: the server bundle includes every dependency.
 
 - `vite build` with the `prerender` option: also builds the SSR bundle, and writes a page for each route.
+  The dev server then renders only those routes, into the `prerender.template`.
 
 The options are `entry` (default `app/app-ssr.js`), `prerender`, and `allowedHosts`, `settledTimeout`, and `redirectCode` from above.
 

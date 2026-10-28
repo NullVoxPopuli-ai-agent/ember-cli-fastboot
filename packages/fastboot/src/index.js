@@ -29,7 +29,7 @@ export default class FastBoot {
   #page;
 
   constructor(options = {}) {
-    let { distPath, entry, vite, resilient = false, workers } = options;
+    let { distPath, entry, vite, resilient = false, workers, template = 'index.html' } = options;
 
     if (!vite && !distPath) {
       throw new Error('FastBoot needs the `distPath` option (the directory of the build), or the `vite` option.');
@@ -47,7 +47,7 @@ export default class FastBoot {
       redirectCode: options.redirectCode ?? 307,
     };
 
-    this.#source = { distPath, entry, vite, workers: workers ?? availableParallelism() };
+    this.#source = { distPath, entry, vite, template, workers: workers ?? availableParallelism() };
     this.#start();
   }
 
@@ -59,7 +59,7 @@ export default class FastBoot {
    * @param {import('node:http').IncomingMessage} [options.request] the request, for `fastboot.request`
    * @param {import('node:http').ServerResponse} [options.response] the response, for its initial headers
    * @param {object} [options.metadata] data for `fastboot.metadata`; it must survive `structuredClone`
-   * @param {string} [options.html] the HTML page to render into; the default is the `index.html` of the build
+   * @param {string} [options.html] the HTML page to render into; the default is the `template` of the build
    * @param {boolean} [options.resilient] when true, a failed render resolves with `result.error` set
    * @returns {Promise<Result>}
    */
@@ -127,16 +127,16 @@ export default class FastBoot {
   }
 
   async #pageFor(url) {
-    let { distPath, vite } = this.#source;
+    let { distPath, vite, template } = this.#source;
 
     if (vite) {
-      let source = await readFile(join(vite.config.root, 'index.html'), 'utf8');
+      let source = await readFile(join(vite.config.root, template), 'utf8');
 
       /** The same arguments as the HTML middleware of Vite: the file, then the URL of the page. */
-      return vite.transformIndexHtml('/index.html', source, url);
+      return vite.transformIndexHtml(`/${template}`, source, url);
     }
 
-    this.#page ??= readFile(join(distPath, 'index.html'), 'utf8');
+    this.#page ??= readFile(join(distPath, template), 'utf8');
 
     return this.#page;
   }

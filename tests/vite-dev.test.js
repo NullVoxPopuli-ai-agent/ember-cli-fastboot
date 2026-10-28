@@ -83,3 +83,43 @@ describe('fastboot/vite in the dev server', () => {
     }
   });
 });
+
+describe('fastboot/vite with prerender in the dev server', () => {
+  let server;
+  let origin;
+  let cwd = process.cwd();
+
+  beforeAll(async () => {
+    process.chdir(appRoot);
+    server = await createServer({
+      root: appRoot,
+      configFile: join(appRoot, 'vite.config.ssg.mjs'),
+      logLevel: 'silent',
+      server: { port: 0, host: '127.0.0.1' },
+    });
+    await server.listen();
+    origin = `http://127.0.0.1:${server.httpServer.address().port}`;
+  });
+
+  afterAll(async () => {
+    await server?.close();
+    process.chdir(cwd);
+  });
+
+  function page(url) {
+    return fetch(`${origin}${url}`, { headers: { accept: 'text/html' } });
+  }
+
+  test('a page in the prerender routes is rendered, as in the build', async () => {
+    let text = withoutMarkers(await (await page('/about')).text());
+
+    expect(text).toContain('<h1>About</h1>');
+  });
+
+  test('a page that is not in the prerender routes is not rendered', async () => {
+    let text = await (await page('/teapot')).text();
+
+    expect(text).toContain('/@vite/client');
+    expect(text).not.toContain('<!--%+b:0%-->');
+  });
+});
