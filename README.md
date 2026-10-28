@@ -9,6 +9,7 @@ On the server, the app runs with a DOM, as it does in a browser.
 Apps and addons do not need code that is only for the server.
 
 FastBoot works with classic apps (ember-cli and broccoli) and with Vite apps.
+It renders pages for each request (SSR), or once at build time (SSG).
 
 | Package                                             | What it gives you                                                                    |
 | --------------------------------------------------- | ------------------------------------------------------------------------------------ |
@@ -125,6 +126,32 @@ Upgrading from version 6? Read [UPGRADING.md](UPGRADING.md).
    app.use(express.static('dist/client', { index: false }));
    app.use(fastbootMiddleware({ distPath: 'dist/client', entry: 'dist/server/app-ssr.mjs' }));
    ```
+
+## Prerender pages at build time (SSG)
+
+A prerendered page is a static file, so it needs no Node.js server.
+
+In a Vite app, add `prerender` to the plugin, then run `vite build`:
+
+```js
+fastboot({
+  prerender: { routes: ['/', '/about', '/blog'] },
+});
+```
+
+`vite build` then builds the SSR bundle, and writes `dist/about/index.html` and the other pages.
+To render into a different HTML file of the build, set `prerender.template`, for example `'index.ssg.html'`.
+
+In a classic app, call `prerender()` after `ember build`:
+
+```js
+import { prerender } from 'fastboot/prerender';
+
+await prerender({ distPath: 'dist', routes: ['/', '/about', '/blog'] });
+```
+
+The build fails when a page has an error, or a status code of 400 or more.
+The browser takes over each page, as it does after SSR.
 
 ## Where the rendered HTML goes
 

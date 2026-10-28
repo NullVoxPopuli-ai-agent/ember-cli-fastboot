@@ -29,6 +29,10 @@
       "types": "./src/middleware.d.ts",
       "default": "./src/middleware.js"
     },
+    "./prerender": {
+      "types": "./src/prerender.d.ts",
+      "default": "./src/prerender.js"
+    },
     "./vite": {
       "types": "./src/vite.d.ts",
       "default": "./src/vite.js"

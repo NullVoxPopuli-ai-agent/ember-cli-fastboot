@@ -8,6 +8,13 @@ export interface FastBootPluginOptions {
   allowedHosts?: AllowedHost[];
   settledTimeout?: number;
   redirectCode?: number;
+  /** Pages to write at build time, with `vite build`. */
+  prerender?: {
+    /** The URLs of the pages, for example `['/', '/about']`. */
+    routes: string[];
+    /** The built HTML file to render into. The default is `index.html`. */
+    template?: string;
+  };
 }
 
 export function fastboot(options?: FastBootPluginOptions): Plugin;

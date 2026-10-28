@@ -12,7 +12,7 @@ export default [
     },
   },
   {
-    files: ['packages/ember-cli-fastboot/src/**/*.js', 'tests/rehydrate.test.js'],
+    files: ['packages/ember-cli-fastboot/src/**/*.js', 'tests/rehydrate.test.js', 'tests/prerender.test.js'],
     languageOptions: { globals: globals.browser },
   },
   {

@@ -7,7 +7,7 @@
     "./*": "./app/*"
   },
   "scripts": {
-    "build": "vite build --outDir dist/client && vite build --ssr app/app-ssr.js --outDir dist/server",
+    "build": "vite build --outDir dist/client && vite build --ssr app/app-ssr.js --outDir dist/server && vite build --config vite.config.ssg.mjs --outDir dist/static",
     "start": "vite"
   },
   "devDependencies": {

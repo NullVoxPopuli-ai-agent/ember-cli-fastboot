@@ -93,6 +93,28 @@ The first argument is a `FastBoot`, or the options for `new FastBoot()`.
 - A URL that has no route goes to `next()`.
 - A failed render goes to `next(error)`, unless `resilient` is `true`.
 
+## `fastboot/prerender`
+
+```js
+import { prerender } from 'fastboot/prerender';
+
+let pages = await prerender({ distPath: 'dist', routes: ['/', '/about'] });
+```
+
+Renders each URL, and writes the page as `<outDir>/<url>/index.html`.
+It resolves with `{ url, file, statusCode }` for each page.
+It rejects with an `AggregateError` when a page has an error, or a status code of 400 or more.
+
+| Option     | What it does                                                            |
+| ---------- | ----------------------------------------------------------------------- |
+| `routes`   | the URLs to render                                                      |
+| `distPath` | the directory of the build                                              |
+| `entry`    | the SSR bundle of a Vite build                                          |
+| `template` | the HTML file in `distPath` to render into; the default is `index.html` |
+| `outDir`   | the directory for the pages; the default is `distPath`                  |
+
+The other options of `FastBoot`, for example `workers`, also apply.
+
 ## `fastboot/vite`
 
 ```js
@@ -107,7 +129,14 @@ export default defineConfig({
   A failed render shows the error page of Vite.
 - `vite build --ssr <entry>`: the server bundle includes every dependency.
 
-The options are `entry` (default `app/app-ssr.js`), and `allowedHosts`, `settledTimeout`, and `redirectCode` from above.
+- `vite build` with the `prerender` option: also builds the SSR bundle, and writes a page for each route.
+
+The options are `entry` (default `app/app-ssr.js`), `prerender`, and `allowedHosts`, `settledTimeout`, and `redirectCode` from above.
+
+| `prerender` option | What it does                                                           |
+| ------------------ | ---------------------------------------------------------------------- |
+| `routes`           | the URLs of the pages                                                  |
+| `template`         | the HTML file of the build to render into; the default is `index.html` |
 
 ## The SSR entry of a Vite app
 
