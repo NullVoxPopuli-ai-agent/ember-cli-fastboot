@@ -1,4 +1,4 @@
-import type { FastBootOptions } from './index.js';
+import type { FastBootOptions, Result } from './index.js';
 
 export interface PrerenderOptions extends Omit<FastBootOptions, 'vite' | 'resilient'> {
   /** The URLs to render, for example `['/', '/about']`. */
@@ -8,6 +8,8 @@ export interface PrerenderOptions extends Omit<FastBootOptions, 'vite' | 'resili
   template?: string;
   /** The directory for the pages. The default is `distPath`. */
   outDir?: string;
+  /** Changes the HTML of a page before it is written. */
+  transformHtml?: (html: string, page: { url: string; result: Result }) => string;
 }
 
 export interface PrerenderedPage {

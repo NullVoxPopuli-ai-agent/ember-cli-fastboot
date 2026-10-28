@@ -47,6 +47,19 @@ describe.each(Object.entries(builds))('%s build', (_name, build) => {
     expect(result.domContents().body.startsWith('<!--%+b:0%-->')).toBe(true);
   });
 
+  test('the result names the active routes', async () => {
+    let { result } = await render('/about');
+
+    expect(result.routeNames).toEqual(['application', 'about']);
+  });
+
+  test('a route that Embroider splits renders', async () => {
+    let { result, text } = await render('/lazy');
+
+    expect(text).toContain('<h1 class="lazy-title">Lazy</h1>');
+    expect(result.routeNames).toEqual(['application', 'lazy']);
+  });
+
   test('a redirect in a route becomes a 307 to the final URL', async () => {
     let { result, html } = await render('/redirect');
 

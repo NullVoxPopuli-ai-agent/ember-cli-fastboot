@@ -60,13 +60,14 @@ Options of `visit()`:
 
 ### `Result`
 
-| Member          | What it is                                                              |
-| --------------- | ----------------------------------------------------------------------- |
-| `statusCode`    | the status code that the app set, or `200`                              |
-| `headers`       | the headers that the app set: `get`, `getAll`, `has`, `entries`, `keys` |
-| `error`         | the error of a failed render                                            |
-| `html()`        | the full page                                                           |
-| `domContents()` | `{ head, body }`: the rendered content without the page                 |
+| Member          | What it is                                                                               |
+| --------------- | ---------------------------------------------------------------------------------------- |
+| `statusCode`    | the status code that the app set, or `200`                                               |
+| `headers`       | the headers that the app set: `get`, `getAll`, `has`, `entries`, `keys`                  |
+| `error`         | the error of a failed render                                                             |
+| `routeNames`    | the active routes after the render, from the top: `['application', 'blog', 'blog.post']` |
+| `html()`        | the full page                                                                            |
+| `domContents()` | `{ head, body }`: the rendered content without the page                                  |
 
 For a redirect, `html()` is a short page with a link to the new URL.
 For a failed render, `html()` is the page without rendered content, so that the browser renders it.
@@ -105,13 +106,14 @@ Renders each URL, and writes the page as `<outDir>/<url>/index.html`.
 It resolves with `{ url, file, statusCode }` for each page.
 It rejects with an `AggregateError` when a page has an error, or a status code of 400 or more.
 
-| Option     | What it does                                                            |
-| ---------- | ----------------------------------------------------------------------- |
-| `routes`   | the URLs to render                                                      |
-| `distPath` | the directory of the build                                              |
-| `entry`    | the SSR bundle of a Vite build                                          |
-| `template` | the HTML file in `distPath` to render into; the default is `index.html` |
-| `outDir`   | the directory for the pages; the default is `distPath`                  |
+| Option          | What it does                                                            |
+| --------------- | ----------------------------------------------------------------------- |
+| `routes`        | the URLs to render                                                      |
+| `distPath`      | the directory of the build                                              |
+| `entry`         | the SSR bundle of a Vite build                                          |
+| `template`      | the HTML file in `distPath` to render into; the default is `index.html` |
+| `outDir`        | the directory for the pages; the default is `distPath`                  |
+| `transformHtml` | `(html, { url, result }) => html`: changes a page before it is written  |
 
 The other options of `FastBoot`, for example `workers`, also apply.
 
@@ -137,6 +139,10 @@ The options are `entry` (default `app/app-ssr.js`), `prerender`, and `allowedHos
 | ------------------ | ---------------------------------------------------------------------- |
 | `routes`           | the URLs of the pages                                                  |
 | `template`         | the HTML file of the build to render into; the default is `index.html` |
+| `routeName`        | `(source) => name`: the route of a source module, for its stylesheets  |
+
+Each page links the CSS of the modules of its routes.
+The default `routeName` reads the routes that Embroider splits, and `app/templates`, `app/routes`, and `app/controllers`.
 
 ## The SSR entry of a Vite app
 

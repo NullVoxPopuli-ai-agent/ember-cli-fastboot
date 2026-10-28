@@ -16,10 +16,20 @@ import FastBoot from './index.js';
  * @param {string} [options.entry] the SSR bundle of a Vite build
  * @param {string} [options.template] the HTML file in `distPath` to render into; the default is `index.html`
  * @param {string} [options.outDir] the directory for the pages; the default is `distPath`
+ * @param {(html: string, page: { url: string, result: import('./result.js').Result }) => string} [options.transformHtml]
+ *   changes the HTML of a page before it is written
  * @returns {Promise<Array<{ url: string, file: string, statusCode: number }>>}
  */
 export async function prerender(options) {
-  let { routes, distPath, entry, template = 'index.html', outDir = distPath, ...fastbootOptions } = options;
+  let {
+    routes,
+    distPath,
+    entry,
+    template = 'index.html',
+    outDir = distPath,
+    transformHtml = (page) => page,
+    ...fastbootOptions
+  } = options;
 
   /**
    * Read the template before the first page is written:
@@ -50,7 +60,7 @@ export async function prerender(options) {
       let file = resolve(outDir, `.${url.split('?')[0]}`, 'index.html');
 
       await mkdir(dirname(file), { recursive: true });
-      await writeFile(file, result.html());
+      await writeFile(file, transformHtml(result.html(), { url, result }));
 
       pages.push({ url, file, statusCode: result.statusCode });
     }

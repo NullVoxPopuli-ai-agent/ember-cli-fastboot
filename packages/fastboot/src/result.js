@@ -13,6 +13,7 @@ export class Result {
     this.#page = page;
 
     this.statusCode = rendered.statusCode;
+    this.routeNames = rendered.routeNames ?? [];
     this.headers = new FastBootHeaders(rendered.headers);
     this.error = rendered.error ? toError(rendered.error) : undefined;
   }

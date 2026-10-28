@@ -1,4 +1,4 @@
-import EmberRouter from '@ember/routing/router';
+import EmberRouter from '@embroider/router';
 import config from 'vite-app/config/environment';
 
 export default class Router extends EmberRouter {
@@ -17,4 +17,5 @@ Router.map(function () {
   this.route('broken');
   this.route('document');
   this.route('store');
+  this.route('lazy');
 });

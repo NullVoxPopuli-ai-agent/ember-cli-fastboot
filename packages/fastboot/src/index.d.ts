@@ -50,6 +50,8 @@ export declare class Result {
   statusCode: number;
   headers: FastBootHeaders;
   error: Error | undefined;
+  /** The names of the active routes after the render, from the top: `['application', 'blog', 'blog.post']`. */
+  routeNames: string[];
   /** The full HTML page. */
   html(): string;
   /** The rendered content of `<head>` and `<body>`. */

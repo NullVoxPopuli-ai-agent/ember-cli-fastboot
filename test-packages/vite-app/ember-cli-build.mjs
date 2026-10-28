@@ -9,5 +9,5 @@ export default async function (defaults) {
 
   setConfig(app, import.meta.dirname, { compatWith: '5.8' });
 
-  return compatBuild(app, buildOnce);
+  return compatBuild(app, buildOnce, { splitAtRoutes: ['lazy'] });
 }

@@ -12,7 +12,7 @@ export default defineConfig({
       extensions,
     }),
     fastboot({
-      prerender: { routes: ['/', '/about', '/shoebox', '/document'] },
+      prerender: { routes: ['/', '/about', '/shoebox', '/document', '/lazy'] },
     }),
   ],
 });

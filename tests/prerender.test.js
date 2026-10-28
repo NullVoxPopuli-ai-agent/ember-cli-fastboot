@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, rm, stat } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -23,6 +23,20 @@ describe('the prerender option of the Vite plugin', () => {
     expect(shoebox).toContain('id="shoebox-answer"');
   });
 
+  test('a page links the stylesheets of its lazy routes, and only those', async () => {
+    let lazy = await readFile(join(staticDir, 'lazy/index.html'), 'utf8');
+    let about = await readFile(join(staticDir, 'about/index.html'), 'utf8');
+
+    expect(lazy).toMatch(
+      /<link rel="stylesheet" crossorigin href="\/assets\/-embroider-route-entrypoint-[\w-]+\.css">/,
+    );
+    expect(about).not.toContain('-embroider-route-entrypoint-');
+  });
+
+  test('the build keeps no manifest that the plugin added', async () => {
+    await expect(stat(join(staticDir, '.vite'))).rejects.toThrow('ENOENT');
+  });
+
   describe('in a browser', () => {
     let server;
     let browser;
@@ -45,6 +59,19 @@ describe('the prerender option of the Vite plugin', () => {
     afterAll(async () => {
       await browser?.close();
       await server?.close();
+    });
+
+    test('a page has the styles of its lazy route before JavaScript runs', async () => {
+      let context = await browser.newContext({ javaScriptEnabled: false });
+      let page = await context.newPage();
+
+      await page.goto(`${server.origin}/lazy`);
+
+      expect(await page.evaluate(() => getComputedStyle(document.querySelector('.lazy-title')).color)).toBe(
+        'rgb(0, 128, 0)',
+      );
+
+      await context.close();
     });
 
     test('the app takes over a prerendered page', async () => {

@@ -142,6 +142,20 @@ fastboot({
 `vite build` then builds the SSR bundle, and writes `dist/about/index.html` and the other pages.
 To render into a different HTML file of the build, set `prerender.template`, for example `'index.ssg.html'`.
 
+Each page links the stylesheets of its lazy routes, so that the page has its styles before the JavaScript loads.
+FastBoot finds the routes that Embroider splits, and modules in `app/templates`, `app/routes`, and `app/controllers`.
+For another file layout, set `prerender.routeName`:
+
+```js
+fastboot({
+  prerender: {
+    routes: ['/docs'],
+    // 'app/routes/docs/+template.gts' → 'docs'
+    routeName: (source) => /^app\/routes\/(.+)\/\+template\.gts$/.exec(source)?.[1].replaceAll('/', '.'),
+  },
+});
+```
+
 In a classic app, call `prerender()` after `ember build`:
 
 ```js

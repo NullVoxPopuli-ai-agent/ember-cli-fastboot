@@ -28,6 +28,7 @@ export async function render({ app, settled, window, task, options }) {
     htmlAttrs: {},
     bodyAttrs: {},
     shoebox: '',
+    routeNames: [],
     statusCode: 200,
     headers: {},
   };
@@ -56,6 +57,7 @@ export async function render({ app, settled, window, task, options }) {
     result.htmlAttrs = attributesOf(document.documentElement);
     result.bodyAttrs = attributesOf(document.body);
     result.shoebox = shoeboxHTML(info.shoebox);
+    result.routeNames = activeRouteNames(instance);
   } catch (error) {
     result.error = serializeError(error);
     info.response.statusCode = error?.name === 'UnrecognizedURLError' ? 404 : 500;
@@ -82,6 +84,21 @@ export async function render({ app, settled, window, task, options }) {
  */
 function withoutRootURL(url, rootURL = '/') {
   return url.startsWith(rootURL) ? `/${url.slice(rootURL.length)}` : url;
+}
+
+/**
+ * The names of the active routes, from the top: `['application', 'blog', 'blog.post']`.
+ */
+function activeRouteNames(instance) {
+  let names = [];
+
+  for (let route = instance.lookup('service:router')?.currentRoute; route; route = route.parent) {
+    names.unshift(route.name);
+  }
+
+  if (names[0] !== 'application') names.unshift('application');
+
+  return names;
 }
 
 /**

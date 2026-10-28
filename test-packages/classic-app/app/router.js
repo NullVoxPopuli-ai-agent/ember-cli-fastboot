@@ -16,4 +16,5 @@ Router.map(function () {
   this.route('slow');
   this.route('broken');
   this.route('document');
+  this.route('lazy');
 });

@@ -14,6 +14,12 @@ export interface FastBootPluginOptions {
     routes: string[];
     /** The built HTML file to render into. The default is `index.html`. */
     template?: string;
+    /**
+     * The route of a source module, for example `'app/templates/blog.gjs'` → `'blog'`.
+     * A page links the stylesheets of the modules of its routes.
+     * The default reads the routes that Embroider splits, and `app/templates`, `app/routes`, and `app/controllers`.
+     */
+    routeName?: (source: string) => string | undefined;
   };
 }
 

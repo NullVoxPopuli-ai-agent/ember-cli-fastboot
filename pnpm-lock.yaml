@@ -301,6 +301,9 @@ importers:
       '@embroider/macros':
         specifier: ^1.21.1
         version: 1.21.4(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1)
+      '@embroider/router':
+        specifier: ^3.0.6
+        version: 3.0.6(@embroider/core@4.6.10(patch_hash=939a45ae77d4e0b84b404d73b2a8b727a36e36cc83cbdfa26565c2bd5077aeee)(supports-color@8.1.1))
       '@embroider/vite':
         specifier: ^1.7.13
         version: 1.8.0(@babel/core@7.29.7(supports-color@8.1.1))(@embroider/core@4.6.10(patch_hash=939a45ae77d4e0b84b404d73b2a8b727a36e36cc83cbdfa26565c2bd5077aeee)(supports-color@8.1.1))(supports-color@8.1.1)(vite@8.3.5(@types/node@24.5.2)(terser@5.51.2)(yaml@2.9.0))
@@ -1014,6 +1017,14 @@ packages:
   '@embroider/reverse-exports@0.2.0':
     resolution: {integrity: sha512-WFsw8nQpHZiWGEDYpa/A79KEFfTisqteXbY+jg9eZiww1r1G+LZvsmdszDp86TkotUSCqrMbK/ewn0jR1CJmqg==}
     engines: {node: 12.* || 14.* || >= 16}
+
+  '@embroider/router@3.0.6':
+    resolution: {integrity: sha512-D+Us/ZwE1q1W7VHuq3tNDTavv9/uewh8IUFkMocve3X3rPYRiVzaw5G5wooX+409ng1W1ApLl7bxOwZHhYU9uQ==}
+    peerDependencies:
+      '@embroider/core': ^2.0.0||^3.0.0||^4.0.0-alpha.0
+    peerDependenciesMeta:
+      '@embroider/core':
+        optional: true
 
   '@embroider/shared-internals@2.9.1':
     resolution: {integrity: sha512-8PJBsa37GD++SAfHf8rcJzlwDwuAQCBo0fr+eGxg9l8XhBXsTnE/7706dM4OqWew9XNqRXn39wfIGHZoBpjNMw==}
@@ -6770,6 +6781,13 @@ snapshots:
     dependencies:
       mem: 8.1.1
       resolve.exports: 2.0.3
+
+  '@embroider/router@3.0.6(@embroider/core@4.6.10(patch_hash=939a45ae77d4e0b84b404d73b2a8b727a36e36cc83cbdfa26565c2bd5077aeee)(supports-color@8.1.1))':
+    dependencies:
+      '@ember/test-waiters': 4.1.2
+      '@embroider/addon-shim': 1.11.0
+    optionalDependencies:
+      '@embroider/core': 4.6.10(patch_hash=939a45ae77d4e0b84b404d73b2a8b727a36e36cc83cbdfa26565c2bd5077aeee)(supports-color@8.1.1)
 
   '@embroider/shared-internals@2.9.1(supports-color@8.1.1)':
     dependencies:
